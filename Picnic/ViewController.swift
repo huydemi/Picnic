@@ -46,6 +46,8 @@ class ViewController: UIViewController {
   
   required init?(coder aDecoder: NSCoder) {
     super.init(coder: aDecoder)
+    
+    tap = UITapGestureRecognizer(target: self, action: #selector(ViewController.handleTap(_:)))
   }
   
   override func viewDidAppear(_ animated: Bool) {
@@ -53,6 +55,8 @@ class ViewController: UIViewController {
     openBasket()
     openNapkins()
     moveBugLeft()
+    
+    view.addGestureRecognizer(tap)
   }
   
   func openBasket() {
@@ -69,9 +73,25 @@ class ViewController: UIViewController {
   }
   
   @objc func handleTap(_ gesture: UITapGestureRecognizer) {
+    
     let tapLocation = gesture.location(in: bug.superview)
     if (bug.layer.presentation()?.frame.contains(tapLocation))! {
       print("Bug tapped!")
+      
+      if isBugDead { return }
+      view.removeGestureRecognizer(tap)
+      isBugDead = true
+      UIView.animate(withDuration: 0.7, delay: 0.0,
+                     options: [.curveEaseOut , .beginFromCurrentState], animations: {
+                      self.bug.transform = CGAffineTransform(scaleX: 1.25, y: 0.75)
+      }, completion: { finished in
+        UIView.animate(withDuration: 2.0, delay: 2.0, options: [], animations: {
+          self.bug.alpha = 0.0
+        }, completion: { finished in
+          self.bug.removeFromSuperview()
+        })
+      })
+      
     } else {
       print("Bug not tapped!")
     }
