@@ -53,6 +53,15 @@ class ViewController: UIViewController {
   
   func openBasket() {
     
+    basketTopConstraint.constant -= basketTop.frame.size.height
+    basketBottomConstraint.constant -= basketBottom.frame.size.height
+    
+    UIView.animate(withDuration: 0.7, delay: 1.0, options: .curveEaseOut, animations: {
+      self.view.layoutIfNeeded()
+    }, completion: { finished in
+      print("Basket doors opened!")
+    })
+    
   }
   
   func openNapkins() {
